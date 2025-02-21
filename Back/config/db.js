@@ -1,19 +1,22 @@
 const { Sequelize } = require("sequelize");
-const config = require("./config.json")[process.env.NODE_ENV || "development"];
+
+const isProduction = process.env.NODE_ENV === "production";
 
 const sequelize = process.env.DATABASE_URL
   ? new Sequelize(process.env.DATABASE_URL, {
       dialect: "postgres",
-      dialectOptions: {
-        ssl: {
-          require: true,
-          rejectUnauthorized: false,
-        },
-      },
+      dialectOptions: isProduction
+        ? {
+            ssl: {
+              require: true,
+              rejectUnauthorized: false,
+            },
+          }
+        : {},
     })
-  : new Sequelize(config.database, config.username, config.password, {
-      host: config.host,
-      dialect: config.dialect,
+  : new Sequelize("Ficticia", "postgres", "Admin123", {
+      host: "127.0.0.1",
+      dialect: "postgres",
     });
 
 const connectDB = async () => {
